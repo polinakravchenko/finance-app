@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+                   logicalFilePath="changelog/after/0.0.1.xml">
+    <changeSet id="after-0.0.1.1" author="polina kravchenko" context="dev or local" runOnChange="true">
+        <preConditions onFail="HALT">
+            <tableExists schemaName="payments" tableName="recurring_payment"/>
+        </preConditions>
+        <loadUpdateData schemaName="payments" tableName="recurring_payment" file="csv/recurring_payments.csv" primaryKey="id" separator=";" relativeToChangelogFile="true"/>
+        <rollback/>
+    </changeSet>
+    <!--  Adjust Sequences for Client and Recurring Payment  -->
+    <changeSet id="after-0.0.1.1000" author="polina kravchenko" context="dev or local" runAlways="true">
+        <validCheckSum>ANY</validCheckSum>
+        <sql> SELECT setval('payments.recurring_payment_id_seq', (SELECT MAX(id) FROM payments.recurring_payment)+1, true); </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

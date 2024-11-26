@@ -1,0 +1,44 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+                   logicalFilePath="changelog/migration/R-1.0.0/1.0.0.0.xml">
+    <changeSet id="1.0.0.1.0" author="polina kravchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="payments" tableName="recurring_payment"/>
+            </not>
+        </preConditions>
+        <createSequence schemaName="payments" sequenceName="recurring_payment_id_seq" startValue="1" incrementBy="1" cycle="false" cacheSize="10"/>
+        <createTable schemaName="payments" tableName="recurring_payment">
+            <column name="id" type="int" defaultValueComputed="nextval('payments.recurring_payment_id_seq')">
+                <constraints primaryKeyName="pk_recurring_payment" primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="timestamp"/>
+            <column name="status" type="varchar(20)" defaultValue="active">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable schemaName="payments" tableName="recurring_payment"/>
+            <dropSequence schemaName="payments" sequenceName="recurring_payment_id_seq"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

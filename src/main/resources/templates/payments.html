@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recurring Payments</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+<body>
+<h1>Manage Recurring Payments</h1>
+<form method="get" th:action="@{/ui/payments}">
+    <label>Status:</label>
+    <select name="status">
+        <option value="all" th:selected="${status == 'all'}">All</option>
+        <option value="active" th:selected="${status == 'active'}">Active</option>
+        <option value="cancelled" th:selected="${status == 'cancelled'}">Cancelled</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<form method="post" th:action="@{/ui/payments}">
+    <label>Amount:</label>
+    <input type="number" name="amount" required />
+    <label>Currency:</label>
+    <input type="text" name="currency" required />
+    <label>Frequency:</label>
+    <input type="text" name="frequency" required />
+    <label>Start Date:</label>
+    <input type="datetime-local" name="startDate" required />
+    <label>End Date:</label>
+    <input type="datetime-local" name="endDate" />
+    <button type="submit">Create Payment</button>
+</form>
+
+<h2>Existing Payments</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Amount</th>
+        <th>Currency</th>
+        <th>Frequency</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="payment : ${payments}">
+        <td th:text="${payment.id}"></td>
+        <td th:text="${payment.amount}"></td>
+        <td th:text="${payment.currency}"></td>
+        <td th:text="${payment.frequency}"></td>
+        <td th:text="${payment.status}"></td>
+        <td>
+            <form method="post" th:action="@{/ui/payments/delete/{id}(id=${payment.id})}" class="table-actions">
+                <button type="submit" th:if="${payment.status != 'cancelled'}">Cancel</button>
+                <button type="submit" th:if="${payment.status == 'cancelled'}"
+                        onclick="return confirm('Are you sure you want to permanently delete this payment?');"
+                        style="background-color:darkred">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <span th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}"></span>
+    <div>
+        <a th:href="@{/ui/payments(page=${currentPage - 1}, size=5, status=${status})}" th:if="${currentPage > 0}">Previous</a>
+        <a th:href="@{/ui/payments(page=${currentPage + 1}, size=5, status=${status})}" th:if="${currentPage + 1 < totalPages}">Next</a>
+    </div>
+</div>
+</body>
+</html>
