@@ -5,7 +5,9 @@ This project is a simple Spring Rest API for the financial domain. Performs a ta
 ## Requirements
 
 Recommend JDK 21 LTS
+
 Latest version of Maven
+
 Docker Engine. Docker Desktop
 
 ## Installation
